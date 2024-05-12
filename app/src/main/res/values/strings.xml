@@ -5,6 +5,7 @@
     <string name="task_title">Task Title</string>
     <string name="add_task">Add Task</string>
     <string name="select_deadline">Select Deadline</string>
+    <string name="edit_task">edit task</string>
 
     <string-array name="priority_options">
         <item>Urgent</item>

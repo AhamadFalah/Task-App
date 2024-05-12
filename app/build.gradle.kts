@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     kotlin("kapt")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -39,7 +40,9 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
 }
+
 
 dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
@@ -56,4 +59,6 @@ dependencies {
     implementation( "androidx.room:room-ktx:2.5.1")
     implementation( "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0")
     implementation( "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.0")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
 }

@@ -3,18 +3,50 @@ package com.example.todoapp
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class TaskAdapter(private val tasks: List<Task>) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
+class TaskAdapter(
+    private var tasks: List<Task>,
+    private val onItemClick: (Task) -> Unit,
+    private val onEditClick: (Task) -> Unit,
+    private val onDeleteClick: (Task) -> Unit
+) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
     inner class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val taskTitleTextView: TextView = itemView.findViewById(R.id.tv_task_title)
         val taskDescriptionTextView: TextView = itemView.findViewById(R.id.tv_task_description)
         val taskDeadlineTextView: TextView = itemView.findViewById(R.id.tv_task_deadline)
+
+        init {
+            itemView.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val task = tasks[position]
+                    onItemClick(task)
+                }
+            }
+
+            itemView.findViewById<ImageView>(R.id.iv_edit_task).setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val task = tasks[position]
+                    onEditClick(task)
+                }
+            }
+
+            itemView.findViewById<ImageView>(R.id.iv_delete_task).setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val task = tasks[position]
+                    onDeleteClick(task)
+                }
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
@@ -37,4 +69,11 @@ class TaskAdapter(private val tasks: List<Task>) : RecyclerView.Adapter<TaskAdap
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         return dateFormat.format(Date(deadline))
     }
+
+    fun updateTasks(tasks: List<Task>) {
+        this.tasks = tasks
+        notifyDataSetChanged()
+    }
+
+
 }

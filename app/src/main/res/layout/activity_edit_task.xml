@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/edit_task_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:padding="16dp"
+    tools:context=".EditTaskActivity">
+
+    <RelativeLayout
+        android:id="@+id/edit_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_blue"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/edit_heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/architects_daughter"
+            android:text="@string/edit_task"
+            android:textColor="@color/blue"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/edit_save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:contentDescription="@string/save"
+            android:src="@drawable/save"
+            app:tint="@color/blue" />
+
+    </RelativeLayout>
+
+    <EditText
+        android:id="@+id/edit_task_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edit_header"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/border_blue"
+        android:hint="@string/task_title"
+        android:inputType="text"
+        android:padding="8dp"
+        android:textColor="@color/blue" />
+
+    <EditText
+        android:id="@+id/edit_task_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edit_task_title"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/border_blue"
+        android:hint="@string/task_description"
+        android:inputType="textMultiLine"
+        android:padding="8dp"
+        android:textColor="@color/blue" />
+
+    <Spinner
+        android:id="@+id/edit_priority_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edit_task_description"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/border_blue"
+        android:entries="@array/priority_options"
+        android:padding="8dp" />
+
+    <EditText
+        android:id="@+id/edit_deadline_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edit_priority_spinner"
+        android:layout_marginTop="16dp"
+        android:autofillHints=""
+        android:background="@drawable/border_blue"
+        android:clickable="true"
+        android:focusable="false"
+        android:hint="@string/select_deadline"
+        android:inputType="date"
+        android:padding="8dp"
+        android:textColor="@color/blue" />
+
+</RelativeLayout>
