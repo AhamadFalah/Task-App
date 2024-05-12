@@ -1,21 +1,12 @@
-@Dao
-interface TaskDao {
-
-    @Insert
-    suspend fun insert(task: Task)
-
-    @Update
-    suspend fun update(task: Task)
-
-    @Delete
-    suspend fun delete(task: Task)
-
-    @Query("SELECT * FROM tasks")
-    fun getAllTasks(): Flow<List<Task>>
-
-    @Query("SELECT * FROM tasks WHERE id = :taskId")
-    fun getTaskById(taskId: Int): Flow<Task>
-
-    @Query("DELETE FROM tasks")
-    suspend fun deleteAllTasks()
-}
+package com.example.todoapp
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import java.util.Date
+@Entity(tableName = "tasks")
+data class Task( @PrimaryKey(autoGenerate = true)
+                 val id: Int = 0, @ColumnInfo(name = "title")
+                 val title: String, @ColumnInfo(name = "description")
+                 val description: String, @ColumnInfo(name = "priority")
+                 val priority: Int, @ColumnInfo(name = "deadline")
+                 val deadline: Date? )
