@@ -69,10 +69,9 @@ class TaskAdapter(
                 else -> "Unknown"
             }
 
-            binding.priorityIndicator.setBackgroundColor(priorityColor)
+            binding.priorityStatus.setBackgroundColor(priorityColor)
             binding.tvPriorityText.text = priorityText
             binding.tvPriorityText.setTextColor(priorityColor)
-            binding.priorityStatus.setBackgroundColor(priorityColor)
 
             binding.btnEdit.setOnClickListener {
                 editTaskClickListener?.onEditTaskClick(task)
