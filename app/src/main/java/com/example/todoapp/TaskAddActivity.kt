@@ -6,7 +6,10 @@ import android.os.Bundle
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Spinner
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -32,8 +35,6 @@ class TaskAddActivity : AppCompatActivity() {
         prioritySpinner = findViewById(R.id.priority_spinner)
         deadlineEditText = findViewById(R.id.deadline_edittext)
         saveButton = findViewById(R.id.save_button)
-
-
         saveButton.setOnClickListener {
             saveTask()
         }
@@ -57,7 +58,6 @@ class TaskAddActivity : AppCompatActivity() {
             month,
             day
         )
-
         datePickerDialog.show()
     }
 
@@ -81,10 +81,16 @@ class TaskAddActivity : AppCompatActivity() {
                 deadline = taskDeadline
             )
 
+            // Insert the new task into the database using coroutines
+            CoroutineScope(Dispatchers.IO).launch {
+                val taskDao = TaskDatabase.getInstance(applicationContext).taskDao()
+                taskDao.insert(newTask)
 
-
+                // Finish the activity and return to the previous screen
+                withContext(Dispatchers.Main) {
+                    finish()
+                }
             }
+        }
     }
-
-
 }
