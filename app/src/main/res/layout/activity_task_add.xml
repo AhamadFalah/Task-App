@@ -2,10 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/font"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
     android:background="@color/white"
+    android:padding="16dp"
     tools:context=".TaskAddActivity">
 
     <RelativeLayout
@@ -19,6 +20,7 @@
             android:id="@+id/heading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/architects_daughter"
             android:text="@string/add_task"
             android:textColor="@color/blue"
             android:textSize="24sp"
@@ -44,8 +46,8 @@
         android:background="@drawable/border_blue"
         android:hint="@string/task_title"
         android:inputType="text"
-        android:textColor="@color/blue"
-        android:padding="8dp" />
+        android:padding="8dp"
+        android:textColor="@color/blue" />
 
     <EditText
         android:id="@+id/task_description"
@@ -56,8 +58,8 @@
         android:background="@drawable/border_blue"
         android:hint="@string/task_description"
         android:inputType="textMultiLine"
-        android:textColor="@color/blue"
-        android:padding="8dp" />
+        android:padding="8dp"
+        android:textColor="@color/blue" />
 
     <Spinner
         android:id="@+id/priority_spinner"
@@ -75,13 +77,13 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/priority_spinner"
         android:layout_marginTop="16dp"
+        android:autofillHints=""
         android:background="@drawable/border_blue"
         android:clickable="true"
         android:focusable="false"
         android:hint="@string/select_deadline"
         android:inputType="date"
-        android:textColor="@color/blue"
         android:padding="8dp"
-        android:autofillHints="" />
+        android:textColor="@color/blue" />
 
 </RelativeLayout>
