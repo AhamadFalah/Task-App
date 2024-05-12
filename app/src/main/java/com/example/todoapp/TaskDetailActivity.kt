@@ -1,41 +1,45 @@
 package com.example.todoapp
 
+import android.content.Intent
 import android.os.Bundle
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.example.todoapp.databinding.ActivityTaskDetailBinding
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 class TaskDetailActivity : AppCompatActivity() {
-    private lateinit var taskTitleTextView: TextView
-    private lateinit var taskDescriptionTextView: TextView
-    private lateinit var taskPriorityTextView: TextView
-    private lateinit var taskCategoryTextView: TextView
-    private lateinit var taskDeadlineTextView: TextView
+    private lateinit var binding: ActivityTaskDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_task_detail)
-
-        taskTitleTextView = findViewById(R.id.tv_task_title)
-        taskDescriptionTextView = findViewById(R.id.tv_task_description)
-        taskPriorityTextView = findViewById(R.id.tv_task_priority)
-        taskCategoryTextView = findViewById(R.id.tv_task_category)
-        taskDeadlineTextView = findViewById(R.id.tv_task_deadline)
+        binding = ActivityTaskDetailBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val task = intent.getParcelableExtra<Task>("task")
         if (task != null) {
             displayTaskDetails(task)
         }
+
+        binding.btnEditTask.setOnClickListener {
+            val intent = Intent(this, EditTaskActivity::class.java)
+            intent.putExtra("task_id", task?.id)
+            startActivity(intent)
+        }
+
+        binding.btnDeleteTask.setOnClickListener {
+            task?.let { t ->
+                TaskViewModel(application).delete(t)
+                finish()
+            }
+        }
     }
 
     private fun displayTaskDetails(task: Task) {
-        taskTitleTextView.text = task.title
-        taskDescriptionTextView.text = task.description
-        taskPriorityTextView.text = "Priority: ${getPriorityString(task.priority)}"
-        taskCategoryTextView.text = "Category: ${task.category}"
-        taskDeadlineTextView.text = "Deadline: ${formatDate(task.deadline)}"
+        binding.tvTaskTitle.text = task.title
+        binding.tvTaskDescription.text = task.description
+        binding.tvTaskPriority.text = "Priority: ${getPriorityString(task.priority)}"
+        binding.tvTaskCategory.text = "Category: ${task.category}"
+        binding.tvTaskDeadline.text = "Deadline: ${formatDate(task.deadline)}"
     }
 
     private fun getPriorityString(priority: Int): String {

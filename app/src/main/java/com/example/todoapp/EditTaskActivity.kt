@@ -115,4 +115,9 @@ class EditTaskActivity : AppCompatActivity() {
         val categories = listOf("Personal", "Work", "Shopping", "Others")
         return categories.indexOf(category)
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Release any resources or dispose of any objects as needed
+    }
 }

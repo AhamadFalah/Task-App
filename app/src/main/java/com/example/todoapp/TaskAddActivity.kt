@@ -83,7 +83,6 @@ class TaskAddActivity : AppCompatActivity() {
                 deadline = selectedDeadline,
                 category = category
             )
-
             lifecycleScope.launch(Dispatchers.IO) {
                 TaskDatabase.getInstance(applicationContext).taskDao().insert(task)
                 finish()
