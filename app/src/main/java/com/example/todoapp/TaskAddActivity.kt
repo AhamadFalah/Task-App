@@ -1,46 +1,47 @@
 package com.example.todoapp
 
 import android.app.DatePickerDialog
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.EditText
-import android.widget.ImageView
+import android.widget.ArrayAdapter
+import android.widget.DatePicker
 import android.widget.Spinner
-import kotlinx.coroutines.CoroutineScope
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.example.todoapp.databinding.ActivityTaskAddBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
+import java.util.*
 
 class TaskAddActivity : AppCompatActivity() {
-    private lateinit var taskTitleEditText: EditText
-    private lateinit var taskDescriptionEditText: EditText
-    private lateinit var prioritySpinner: Spinner
-    private lateinit var deadlineEditText: EditText
-    private lateinit var saveButton: ImageView
+    private lateinit var binding: ActivityTaskAddBinding
+    private lateinit var categorySpinner: Spinner
+    private var selectedDeadline: Long? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_task_add)
+        binding = ActivityTaskAddBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        deadlineEditText = findViewById(R.id.deadline_edittext)
-        deadlineEditText.setOnClickListener {
-            showDatePicker()
+        categorySpinner = binding.spinnerCategory
+        setupCategorySpinner()
+
+        binding.etTaskDeadline.setOnClickListener {
+            showDatePickerDialog()
         }
 
-        taskTitleEditText = findViewById(R.id.task_title)
-        taskDescriptionEditText = findViewById(R.id.task_description)
-        prioritySpinner = findViewById(R.id.priority_spinner)
-        deadlineEditText = findViewById(R.id.deadline_edittext)
-        saveButton = findViewById(R.id.save_button)
-        saveButton.setOnClickListener {
+        binding.btnSaveTask.setOnClickListener {
             saveTask()
         }
     }
 
-    private fun showDatePicker() {
+    private fun setupCategorySpinner() {
+        val categories = listOf("Personal", "Work", "Shopping", "Others")
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        categorySpinner.adapter = adapter
+    }
+
+    private fun showDatePickerDialog() {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
@@ -48,48 +49,44 @@ class TaskAddActivity : AppCompatActivity() {
 
         val datePickerDialog = DatePickerDialog(
             this,
-            { _, selectedYear, selectedMonth, selectedDayOfMonth ->
-                val selectedDate = Calendar.getInstance()
-                selectedDate.set(selectedYear, selectedMonth, selectedDayOfMonth)
-                val formattedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(selectedDate.time)
-                deadlineEditText.setText(formattedDate)
+            { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+                calendar.set(year, month, dayOfMonth)
+                selectedDeadline = calendar.timeInMillis
+                binding.etTaskDeadline.setText(formatDate(selectedDeadline))
             },
             year,
             month,
             day
         )
+
         datePickerDialog.show()
     }
 
+    private fun formatDate(timestamp: Long?): String {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = timestamp ?: 0
+        val dateFormat = android.text.format.DateFormat.getDateFormat(this)
+        return dateFormat.format(calendar.time)
+    }
+
     private fun saveTask() {
-        val taskTitle = taskTitleEditText.text.toString().trim()
-        val taskDescription = taskDescriptionEditText.text.toString().trim()
-        val taskPriority = prioritySpinner.selectedItemPosition
-        val taskDeadlineString = deadlineEditText.text.toString().trim()
+        val title = binding.etTaskTitle.text.toString().trim()
+        val description = binding.etTaskDescription.text.toString().trim()
+        val priority = binding.spinnerPriority.selectedItemPosition
+        val category = binding.spinnerCategory.selectedItem.toString()
 
-        if (taskTitle.isNotEmpty()) {
-            val taskDeadline = if (taskDeadlineString.isNotEmpty()) {
-                SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(taskDeadlineString)?.time
-            } else {
-                null
-            }
-
-            val newTask = Task(
-                title = taskTitle,
-                description = taskDescription,
-                priority = taskPriority,
-                deadline = taskDeadline
+        if (title.isNotEmpty()) {
+            val task = Task(
+                title = title,
+                description = description,
+                priority = priority,
+                deadline = selectedDeadline,
+                category = category
             )
 
-            // Insert the new task into the database using coroutines
-            CoroutineScope(Dispatchers.IO).launch {
-                val taskDao = TaskDatabase.getInstance(applicationContext).taskDao()
-                taskDao.insert(newTask)
-
-                // Finish the activity and return to the previous screen
-                withContext(Dispatchers.Main) {
-                    finish()
-                }
+            lifecycleScope.launch(Dispatchers.IO) {
+                TaskDatabase.getInstance(applicationContext).taskDao().insert(task)
+                finish()
             }
         }
     }

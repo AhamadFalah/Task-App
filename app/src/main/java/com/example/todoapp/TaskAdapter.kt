@@ -1,81 +1,59 @@
 package com.example.todoapp
 
+import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.todoapp.databinding.ItemTaskBinding
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 class TaskAdapter(
     private var tasks: List<Task>,
-    private val onItemClick: (Task) -> Unit,
-    private val onEditClick: (Task) -> Unit,
-    private val onDeleteClick: (Task) -> Unit
+    private val context: Context
 ) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
-    inner class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val taskTitleTextView: TextView = itemView.findViewById(R.id.tv_task_title)
-        val taskDescriptionTextView: TextView = itemView.findViewById(R.id.tv_task_description)
-        val taskDeadlineTextView: TextView = itemView.findViewById(R.id.tv_task_deadline)
+    inner class TaskViewHolder(private val binding: ItemTaskBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
-        init {
-            itemView.setOnClickListener {
-                val position = adapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    val task = tasks[position]
-                    onItemClick(task)
-                }
-            }
+        fun bind(task: Task) {
+            binding.tvTaskTitle.text = task.title
+            binding.tvTaskDescription.text = task.description
+            binding.tvTaskCategory.text = task.category
+            binding.tvTaskDeadline.text = formatDate(task.deadline)
 
-            itemView.findViewById<ImageView>(R.id.iv_edit_task).setOnClickListener {
-                val position = adapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    val task = tasks[position]
-                    onEditClick(task)
-                }
+            val priorityColor = when (task.priority) {
+                0 -> ContextCompat.getColor(context, R.color.priority_low)
+                1 -> ContextCompat.getColor(context, R.color.priority_medium)
+                2 -> ContextCompat.getColor(context, R.color.priority_high)
+                else -> ContextCompat.getColor(context, R.color.priority_default)
             }
-
-            itemView.findViewById<ImageView>(R.id.iv_delete_task).setOnClickListener {
-                val position = adapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    val task = tasks[position]
-                    onDeleteClick(task)
-                }
-            }
+            binding.priorityIndicator.setBackgroundColor(priorityColor)
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_task, parent, false)
-        return TaskViewHolder(itemView)
+        val binding = ItemTaskBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return TaskViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         val task = tasks[position]
-        holder.taskTitleTextView.text = task.title
-        holder.taskDescriptionTextView.text = task.description
-        holder.taskDeadlineTextView.text = formatDeadline(task.deadline)
+        holder.bind(task)
     }
 
     override fun getItemCount(): Int {
         return tasks.size
     }
 
-    private fun formatDeadline(deadline: Long?): String {
-        return if (deadline != null) {
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            dateFormat.format(Date(deadline))
-        } else {
-            "No deadline"
-        }
+    fun updateTasks(newTasks: List<Task>) {
+        tasks = newTasks
+        notifyDataSetChanged()
     }
 
-    fun updateTasks(tasks: List<Task>) {
-        this.tasks = tasks
-        notifyDataSetChanged()
+    private fun formatDate(timestamp: Long?): String {
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        return timestamp?.let { dateFormat.format(Date(it)) } ?: ""
     }
 }
