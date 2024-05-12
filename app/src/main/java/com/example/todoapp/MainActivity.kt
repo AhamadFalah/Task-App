@@ -18,32 +18,37 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         taskViewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
-
         taskAdapter = TaskAdapter(
-            onItemClick = { task ->
-                val intent = Intent(this, TaskDetailActivity::class.java)
-                intent.putExtra("task", task)
-                startActivity(intent)
-            },
-            onEditClick = { task ->
-                val intent = Intent(this, EditTaskActivity::class.java)
-                intent.putExtra("task", task)
-                startActivity(intent)
-            },
-            onDeleteClick = { task ->
-                taskViewModel.deleteTask(task)
-            }
+            emptyList(),
+            ::onTaskClicked,
+            ::onTaskEditClicked,
+            ::onTaskDeleteClicked
         )
 
         binding.rvTasks.layoutManager = LinearLayoutManager(this)
         binding.rvTasks.adapter = taskAdapter
 
         retrieveTasksFromDatabase()
-
         binding.buttonAdd.setOnClickListener {
             val intent = Intent(this, TaskAddActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    private fun onTaskClicked(task: Task) {
+        val intent = Intent(this, TaskDetailActivity::class.java)
+        intent.putExtra("task", task)
+        startActivity(intent)
+    }
+
+    private fun onTaskEditClicked(task: Task) {
+        val intent = Intent(this, EditTaskActivity::class.java)
+        intent.putExtra("task", task)
+        startActivity(intent)
+    }
+
+    private fun onTaskDeleteClicked(task: Task) {
+        taskViewModel.deleteTask(task)
     }
 
     private fun retrieveTasksFromDatabase() {

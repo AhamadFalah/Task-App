@@ -58,22 +58,24 @@ class TaskAdapter(
         val task = tasks[position]
         holder.taskTitleTextView.text = task.title
         holder.taskDescriptionTextView.text = task.description
-        holder.taskDeadlineTextView.text = task.deadline?.let { formatDeadline(it) } ?: "No deadline"
+        holder.taskDeadlineTextView.text = formatDeadline(task.deadline)
     }
 
     override fun getItemCount(): Int {
         return tasks.size
     }
 
-    private fun formatDeadline(deadline: Long): String {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        return dateFormat.format(Date(deadline))
+    private fun formatDeadline(deadline: Long?): String {
+        return if (deadline != null) {
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            dateFormat.format(Date(deadline))
+        } else {
+            "No deadline"
+        }
     }
 
     fun updateTasks(tasks: List<Task>) {
         this.tasks = tasks
         notifyDataSetChanged()
     }
-
-
 }
