@@ -3,6 +3,7 @@ package com.example.todoapp
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.example.todoapp.databinding.ActivityTaskDetailBinding
 import java.text.SimpleDateFormat
 import java.util.*
@@ -37,18 +38,26 @@ class TaskDetailActivity : AppCompatActivity() {
     private fun displayTaskDetails(task: Task) {
         binding.tvTaskTitle.text = task.title
         binding.tvTaskDescription.text = task.description
-        binding.tvTaskPriority.text = "Priority: ${getPriorityString(task.priority)}"
-        binding.tvTaskCategory.text = "Category: ${task.category}"
-        binding.tvTaskDeadline.text = "Deadline: ${formatDate(task.deadline)}"
-    }
 
-    private fun getPriorityString(priority: Int): String {
-        return when (priority) {
+        val priorityColor = when (task.priority) {
+            0 -> ContextCompat.getColor(this, R.color.priority_low)
+            1 -> ContextCompat.getColor(this, R.color.priority_medium)
+            2 -> ContextCompat.getColor(this, R.color.priority_high)
+            else -> ContextCompat.getColor(this, R.color.priority_default)
+        }
+
+        val priorityText = when (task.priority) {
             0 -> "Low"
             1 -> "Medium"
             2 -> "High"
             else -> "Unknown"
         }
+
+        binding.tvTaskPriority.text = priorityText
+        binding.tvTaskPriority.setTextColor(priorityColor)
+
+        binding.tvTaskCategory.text = task.category
+        binding.tvTaskDeadline.text = formatDate(task.deadline)
     }
 
     private fun formatDate(timestamp: Long?): String {

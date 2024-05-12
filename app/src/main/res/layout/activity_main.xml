@@ -19,6 +19,8 @@
         android:layout_margin="16dp"
         android:src="@drawable/add"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:backgroundTint="@color/primary"
+        android:background="@color/background"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

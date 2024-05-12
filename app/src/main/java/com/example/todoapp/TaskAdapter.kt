@@ -13,6 +13,7 @@ class TaskAdapter(
     private var tasks: List<Task>,
     private val context: Context
 ) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
+
     private var editTaskClickListener: EditTaskClickListener? = null
     private var deleteTaskClickListener: DeleteTaskClickListener? = null
     private var itemClickListener: ItemClickListener? = null
@@ -62,16 +63,7 @@ class TaskAdapter(
                 else -> ContextCompat.getColor(context, R.color.priority_default)
             }
 
-            val priorityText = when (task.priority) {
-                0 -> "Low"
-                1 -> "Medium"
-                2 -> "High"
-                else -> "Unknown"
-            }
-
             binding.priorityStatus.setBackgroundColor(priorityColor)
-            binding.tvPriorityText.text = priorityText
-            binding.tvPriorityText.setTextColor(priorityColor)
 
             binding.btnEdit.setOnClickListener {
                 editTaskClickListener?.onEditTaskClick(task)
@@ -89,7 +81,9 @@ class TaskAdapter(
 
     private fun formatDate(timestamp: Long?): String {
         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        return timestamp?.let { dateFormat.format(Date(it)) } ?: ""
+        return timestamp?.let {
+            dateFormat.format(Date(it))
+        } ?: ""
     }
 
     interface EditTaskClickListener {

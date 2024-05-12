@@ -11,20 +11,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background"
-        android:paddingStart="24dp"
-        android:paddingTop="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="16dp">
-
-        <View
-            android:id="@+id/priority_status"
-            android:layout_width="12dp"
-            android:layout_height="0dp"
-            android:background="@color/priority_low"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/tv_task_title"
@@ -89,6 +76,15 @@
             android:src="@drawable/delete"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/priority_status"
+            android:layout_width="8dp"
+            android:layout_height="0dp"
+            android:background="@drawable/priority_status_background"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_task_deadline"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_task_title" />
 
         <TextView
             android:id="@+id/tv_priority_text"

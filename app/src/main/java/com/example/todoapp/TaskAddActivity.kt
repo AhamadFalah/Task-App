@@ -3,8 +3,7 @@ package com.example.todoapp
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.widget.ArrayAdapter
-import android.widget.DatePicker
-import android.widget.Spinner
+import android.widget.AutoCompleteTextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.todoapp.databinding.ActivityTaskAddBinding
@@ -14,7 +13,8 @@ import java.util.*
 
 class TaskAddActivity : AppCompatActivity() {
     private lateinit var binding: ActivityTaskAddBinding
-    private lateinit var categorySpinner: Spinner
+    private lateinit var actvCategory: AutoCompleteTextView
+    private lateinit var actvPriority: AutoCompleteTextView
     private var selectedDeadline: Long? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,8 +22,10 @@ class TaskAddActivity : AppCompatActivity() {
         binding = ActivityTaskAddBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        categorySpinner = binding.spinnerCategory
-        setupCategorySpinner()
+        actvCategory = binding.actvCategory
+        actvPriority = binding.actvPriority
+        setupCategoryDropdown()
+        setupPriorityDropdown()
 
         binding.etTaskDeadline.setOnClickListener {
             showDatePickerDialog()
@@ -34,11 +36,16 @@ class TaskAddActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupCategorySpinner() {
+    private fun setupCategoryDropdown() {
         val categories = listOf("Personal", "Work", "Shopping", "Others")
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        categorySpinner.adapter = adapter
+        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, categories)
+        actvCategory.setAdapter(adapter)
+    }
+
+    private fun setupPriorityDropdown() {
+        val priorities = listOf("Low", "Medium", "High")
+        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, priorities)
+        actvPriority.setAdapter(adapter)
     }
 
     private fun showDatePickerDialog() {
@@ -49,7 +56,7 @@ class TaskAddActivity : AppCompatActivity() {
 
         val datePickerDialog = DatePickerDialog(
             this,
-            { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+            { _: android.widget.DatePicker, year: Int, month: Int, dayOfMonth: Int ->
                 calendar.set(year, month, dayOfMonth)
                 selectedDeadline = calendar.timeInMillis
                 binding.etTaskDeadline.setText(formatDate(selectedDeadline))
@@ -72,8 +79,8 @@ class TaskAddActivity : AppCompatActivity() {
     private fun saveTask() {
         val title = binding.etTaskTitle.text.toString().trim()
         val description = binding.etTaskDescription.text.toString().trim()
-        val priority = binding.spinnerPriority.selectedItemPosition
-        val category = binding.spinnerCategory.selectedItem.toString()
+        val priority = getPriorityInt(actvPriority.text.toString())
+        val category = actvCategory.text.toString()
 
         if (title.isNotEmpty()) {
             val task = Task(
@@ -87,6 +94,15 @@ class TaskAddActivity : AppCompatActivity() {
                 TaskDatabase.getInstance(applicationContext).taskDao().insert(task)
                 finish()
             }
+        }
+    }
+
+    private fun getPriorityInt(priority: String): Int {
+        return when (priority) {
+            "Low" -> 0
+            "Medium" -> 1
+            "High" -> 2
+            else -> 0
         }
     }
 }
